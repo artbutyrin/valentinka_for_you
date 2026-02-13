@@ -28,13 +28,15 @@ html::-webkit-scrollbar {
 
 body {
   height: 100%;
-  cursor: url(https://cur.cursors-4u.net/symbols/sym-1/sym49.cur), auto !important;
+  cursor: url("image/cat_3.png") 16 16, auto !important;
 }
 
 canvas {
   position: absolute;
   width: 100%;
   height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .container {
@@ -43,46 +45,105 @@ canvas {
   overflow: hidden;
   flex-direction: column;
   flex: 1;
-  background-image: linear-gradient(to right top, #5998C5, #419D78);
-  animation: changeColor 4s ease-in-out;
-  -webkit-animation: changeColor 4s ease-in-out;
-  -moz-animation: changeColor 4s ease-in-out;
-  -o-animation: changeColor 4s ease-in-out;
-  animation-iteration-count: infinite;
+  position: relative;
 }
 
-@keyframes changeColor {
-  from {
-    background-image: linear-gradient(to left, #5998C5, #419D78);
-  }
-  to {
-    background-image: linear-gradient(to top, #5998C5, #419D78);
-  }
+/* 2 кадр: фон "Light Pillar" (WebGL) або CSS-fallback */
+.frame2-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e98b8b 0%, #ff0000 35%, #8b0000 70%, #1a0505 100%);
 }
 
-/* Header */
+.frame2-bg:not(.light-pillar-active)::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 120%;
+  max-width: 80vmin;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,100,100,0.15) 25%, rgba(233,139,139,0.5) 50%, rgba(255,80,80,0.2) 75%, transparent 100%);
+  filter: blur(50px);
+  animation: pillarGlow 8s ease-in-out infinite;
+}
+
+.frame2-bg:not(.light-pillar-active)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 40%;
+  max-width: 35vmin;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 15%, rgba(233,139,139,0.35) 50%, rgba(255,255,255,0.06) 85%, transparent 100%);
+  filter: blur(25px);
+  animation: pillarGlow 6s ease-in-out infinite reverse;
+}
+
+.frame2-bg.light-pillar-active {
+  background: #0d0202;
+}
+
+.frame2-bg.light-pillar-active::before,
+.frame2-bg.light-pillar-active::after {
+  display: none;
+}
+
+.light-pillar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.light-pillar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.2);
+  color: #888;
+  font-size: 14px;
+}
+
+@keyframes pillarGlow {
+  0%, 100% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+  50% { opacity: 0.85; transform: translateX(-50%) scaleY(1.02); }
+}
+
+/* Контент валентинки поверх сердечка (середній план) */
 .header {
-  text-align: center;
+  position: relative;
   z-index: 3;
+  text-align: center;
 }
 
 .header-name {
   margin: 0;
   font-size: 4rem;
-  color: var(--text-color);
+  color: #fff;
   padding: 20px 0;
   line-height: 50px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .header-description {
   font-size: 2rem;
-  color: var(--text-color);
+  color: rgba(255,255,255,0.95);
   padding: 10px 0;
   font-weight: 400;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 /* Content */
 .content {
+  position: relative;
+  z-index: 3;
   height: calc(100% - var(--header-height));
   padding: 20px 0;
   display: flex;
@@ -122,14 +183,14 @@ canvas {
   position: absolute;
   top: 198px;
   left: 420px;
-  cursor: url(https://cur.cursors-4u.net/symbols/sym-1/sym49.cur), auto !important;
+  cursor: url("image/cat_3.png") 16 16, auto !important;
 }
 
 .btn--no {
   position: absolute;
   top: 198px;
   right: 420px;
-  cursor: url(https://cur.cursors-4u.net/symbols/sym-1/sym49.cur), auto !important;
+  transform-origin: center center;
 }
 
 .btn--yes:hover {
@@ -170,7 +231,7 @@ canvas {
 
 .footer-link:hover {
   color: #5998C5;
-  cursor: url(https://cur.cursors-4u.net/symbols/sym-1/sym49.cur), auto !important;
+  cursor: url("image/cat_3.png") 16 16, auto !important;
 }
 
 /* Modal */
@@ -181,11 +242,36 @@ canvas {
   left: 0;
   bottom: 0;
   display: none;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
 }
 
-.show {
+.modal.show {
   display: flex;
+}
+
+.modal-cat {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 45vh;
+  max-width: 28vw;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  z-index: 0;
+  pointer-events: none;
+}
+.modal.show .modal-cat {
+  display: block;
+}
+.modal-cat--left {
+  left: 12px;
+}
+.modal-cat--right {
+  right: 12px;
 }
 
 .modal__overlay {
@@ -239,7 +325,7 @@ canvas {
   height: 40px;
   font-size: 1.5rem;
   border-radius: 12px;
-  cursor: url(https://cur.cursors-4u.net/symbols/sym-1/sym49.cur), auto !important;
+  cursor: url("image/cat_3.png") 16 16, auto !important;
 }
 
 .btn-close:hover {
@@ -308,5 +394,34 @@ canvas {
 @keyframes dashed {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Екран "Натисніть пробіл щоб продовжити" */
+.start-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease;
+}
+.start-screen.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.start-screen__text {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 300;
+  text-align: center;
+  padding: 2rem;
+  max-width: 90%;
+}
+@media (max-width: 768px) {
+  .start-screen__text {
+    font-size: 1.8rem;
   }
 }

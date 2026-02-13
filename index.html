@@ -25,7 +25,13 @@
     <title>Валентинка для тебе 💕</title>
   </head>
   <body>
+    <div id="start-screen" class="start-screen">
+      <p class="start-screen__text">Натисніть пробіл щоб продовжити</p>
+    </div>
     <div class="container">
+      <div class="frame2-bg" id="frame2-bg" aria-hidden="true">
+        <div id="light-pillar-mount" class="light-pillar-container"></div>
+      </div>
       <div id="preloader">
         <div class="spinner">
           <div class="dashed-loading"></div>
@@ -39,7 +45,7 @@
       <div class="content">
         <div class="music-control">
           <audio controls autoplay loop class="music">
-            <source src="./assets/musics/V1.wav" type="audio/wav" />
+            <source src="./assets/musics/patrick-watson-je-te-laisserai-des-mots.mp3" type="audio/mpeg" />
           </audio>
         </div>
         <div class="answer-question">
@@ -54,6 +60,8 @@
         </footer> -->
       <!-- Modal -->
       <div class="modal">
+        <img src="./assets/image/cat_1.jpg" alt="" class="modal-cat modal-cat--left" />
+        <img src="./assets/image/cat_2.jpg" alt="" class="modal-cat modal-cat--right" />
         <div class="modal__overlay"></div>
         <div class="modal__body">
           <div class="message-modal">
@@ -78,11 +86,34 @@
       type="text/javascript"
       src="https://code.jquery.com/jquery-3.6.0.min.js"
     ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="./CONFIG.js"></script>
     <script src="./assets/js/setting.js"></script>
+    <script src="./assets/js/lightPillar.js"></script>
     <script src="./assets/js/RequestAnimationFrame.js"></script>
     <script src="./assets/js/heartParticle.js"></script>
     <script src="./assets/js/main.js"></script>
+    <script>
+      (function() {
+        var mount = document.getElementById("light-pillar-mount");
+        var frame2Bg = document.getElementById("frame2-bg");
+        if (mount && typeof initLightPillar === "function" && typeof THREE !== "undefined") {
+          var cleanup = initLightPillar(mount, {
+            topColor: "#e98b8b",
+            bottomColor: "#ff0000",
+            intensity: 1,
+            rotationSpeed: 0.3,
+            glowAmount: 0.002,
+            pillarWidth: 3,
+            pillarHeight: 0.4,
+            noiseIntensity: 0.5,
+            pillarRotation: 25,
+            quality: "high"
+          });
+          if (cleanup && frame2Bg) frame2Bg.classList.add("light-pillar-active");
+        }
+      })();
+    </script>
 
   </body>
 </html>
