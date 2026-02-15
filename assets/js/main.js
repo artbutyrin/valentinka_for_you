@@ -40,16 +40,27 @@ function start() {
     if (p && p.catch) p.catch(function () {});
   }
 
+  var revealed = false;
+  function revealValentine(e) {
+    if (e && e.type === "keydown" && e.key !== " " && e.keyCode !== 32) return;
+    if (revealed || !startScreen || startScreen.classList.contains("is-hidden")) return;
+    revealed = true;
+    if (e && e.preventDefault) e.preventDefault();
+    startScreen.classList.add("is-hidden");
+    tryPlayMusic();
+    window.removeEventListener("keydown", onStartKey);
+    startScreen.removeEventListener("click", revealValentine);
+    startScreen.removeEventListener("touchend", onStartTouch);
+  }
   function onStartKey(e) {
-    if (e.key === " " || e.keyCode === 32) {
-      e.preventDefault();
-      if (!startScreen || startScreen.classList.contains("is-hidden")) return;
-      startScreen.classList.add("is-hidden");
-      tryPlayMusic();
-      window.removeEventListener("keydown", onStartKey);
-    }
+    if (e.key === " " || e.keyCode === 32) revealValentine(e);
+  }
+  function onStartTouch(e) {
+    revealValentine(e);
   }
   window.addEventListener("keydown", onStartKey);
+  startScreen.addEventListener("click", revealValentine);
+  startScreen.addEventListener("touchend", onStartTouch);
 
   document.querySelector(".header").innerHTML = `
         <h1 class="header-name">
@@ -78,9 +89,15 @@ function start() {
   var btnNoScale = 1;
   var minScale = 0.35;
 
-  btnNo.onclick = function () {
-    moveBtnNoAway(btnNo, 0, 0);
+  btnNo.onclick = function (e) {
+    e.preventDefault();
+    moveBtnNoAway(btnNo, e.clientX, e.clientY);
   };
+  btnNo.addEventListener("touchend", function (e) {
+    e.preventDefault();
+    var t = e.changedTouches && e.changedTouches[0];
+    if (t) moveBtnNoAway(btnNo, t.clientX, t.clientY);
+  }, { passive: false });
 
   function shrinkBtnNo(btn) {
     btnNoScale = Math.max(minScale, btnNoScale * 0.88);
